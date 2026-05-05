@@ -1,4 +1,4 @@
-name: Deploy Bicep Submodule
+name: Deploy AI Platform
 
 on:
   workflow_dispatch:
@@ -38,6 +38,7 @@ jobs:
   validate:
     name: Validate Bicep
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environmentName || 'dev' }}
     env:
       AZURE_PRINCIPAL_ID: ${{ secrets.AZURE_PRINCIPAL_ID }}
     steps:

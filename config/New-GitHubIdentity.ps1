@@ -21,7 +21,8 @@
 param(
     [string]   $Location = 'swedencentral',
     [string[]] $Environments = @('dev','prod'),
-    [switch]   $SkipGitHubSecrets
+    [switch]   $SkipGitHubSecrets,
+    [switch]   $IncludeRepoSecrets
 )
 
 $ErrorActionPreference = 'Stop'
@@ -179,10 +180,15 @@ if (-not $SkipGitHubSecrets) {
                 AZURE_PRINCIPAL_ID    = $principalId
             }
 
-            Write-Host "Setting repository secrets on $repoSlug..." -ForegroundColor Cyan
-            foreach ($name in $secrets.Keys) {
-                Write-Host "  + $name" -ForegroundColor Green
-                $secrets[$name] | gh secret set $name --repo $repoSlug --body -
+            if ($IncludeRepoSecrets) {
+                Write-Host "Setting repository secrets on $repoSlug..." -ForegroundColor Cyan
+                foreach ($name in $secrets.Keys) {
+                    Write-Host "  + $name" -ForegroundColor Green
+                    $secrets[$name] | gh secret set $name --repo $repoSlug --body -
+                }
+            }
+            else {
+                Write-Host "Skipping repository-scoped secrets (use -IncludeRepoSecrets to enable). Workflow jobs all run inside an environment." -ForegroundColor DarkGray
             }
 
             foreach ($env in $Environments) {
