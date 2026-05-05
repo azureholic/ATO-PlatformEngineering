@@ -57,6 +57,34 @@ param externalFirewallPrivateIp        = readEnvironmentVariable('EXTERNAL_FIREW
 param existingPrivateDnsZonesResourceGroupId = readEnvironmentVariable('EXISTING_PRIVATE_DNS_ZONES_RG_ID', '')
 
 // ---------------------------------------------------------------------------
+// VNet + subnet address space (derived from 10.1.0.0/16)
+// ---------------------------------------------------------------------------
+// Layout (non-overlapping, mirrors upstream default allocation):
+//   10.1.0.0/24   agent              — 256 IPs (10.1.0.0   – 10.1.0.255)
+//   10.1.1.0/24   aca-environment    — 256 IPs (10.1.1.0   – 10.1.1.255)
+//   10.1.2.0/26   private-endpoints  —  64 IPs (10.1.2.0   – 10.1.2.63)
+//   10.1.2.64/26  AzureBastionSubnet —  64 IPs (10.1.2.64  – 10.1.2.127)
+//   10.1.2.128/26 AzureFirewallSubnet—  64 IPs (10.1.2.128 – 10.1.2.191)
+//   10.1.2.192/26 GatewaySubnet      —  64 IPs (10.1.2.192 – 10.1.2.255)
+//   10.1.3.0/27   AppGatewaySubnet   —  32 IPs (10.1.3.0   – 10.1.3.31)
+//   10.1.3.64/27  jumpbox            —  32 IPs (10.1.3.64  – 10.1.3.95)
+//   10.1.3.96/27  devops-build-agents—  32 IPs (10.1.3.96  – 10.1.3.127)
+
+param vnetAddressPrefixes = [
+  '10.1.0.0/16'
+]
+
+param agentSubnetPrefix            = '10.1.0.0/24'
+param acaEnvironmentSubnetPrefix   = '10.1.1.0/24'
+param peSubnetPrefix               = '10.1.2.0/26'
+param azureBastionSubnetPrefix     = '10.1.2.64/26'
+param azureFirewallSubnetPrefix    = '10.1.2.128/26'
+param gatewaySubnetPrefix          = '10.1.2.192/26'
+param azureAppGatewaySubnetPrefix  = '10.1.3.0/27'
+param jumpboxSubnetPrefix          = '10.1.3.64/27'
+param devopsBuildAgentsSubnetPrefix = '10.1.3.96/27'
+
+// ---------------------------------------------------------------------------
 // Feature flags — toggle the components you want to deploy
 // ---------------------------------------------------------------------------
 
