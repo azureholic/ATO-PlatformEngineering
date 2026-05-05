@@ -1,0 +1,3 @@
+[submodule "bicep-ptn-aiml-landing-zone"]
+	path = bicep-ptn-aiml-landing-zone
+	url = https://github.com/Azure/bicep-ptn-aiml-landing-zone.git
