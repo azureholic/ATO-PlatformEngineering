@@ -41,6 +41,7 @@ jobs:
     environment: ${{ github.event.inputs.environmentName || 'dev' }}
     env:
       AZURE_PRINCIPAL_ID: ${{ secrets.AZURE_PRINCIPAL_ID }}
+      AZURE_PRINCIPAL_TYPE: ServicePrincipal
     steps:
       - name: Checkout (with submodules)
         uses: actions/checkout@v4
@@ -88,6 +89,7 @@ jobs:
     environment: ${{ github.event.inputs.environmentName || 'dev' }}
     env:
       AZURE_PRINCIPAL_ID: ${{ secrets.AZURE_PRINCIPAL_ID }}
+      AZURE_PRINCIPAL_TYPE: ServicePrincipal
     steps:
       - name: Checkout (with submodules)
         uses: actions/checkout@v4

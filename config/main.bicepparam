@@ -23,7 +23,7 @@ using '../bicep-ptn-aiml-landing-zone/main.bicep'
 param environmentName = readEnvironmentVariable('AZURE_ENV_NAME', 'dev')
 param location        = readEnvironmentVariable('AZURE_LOCATION', 'eastus2')
 param principalId     = readEnvironmentVariable('AZURE_PRINCIPAL_ID', '')
-param principalType   = 'User' // 'User' | 'ServicePrincipal' | 'Group'
+param principalType   = readEnvironmentVariable('AZURE_PRINCIPAL_TYPE', 'User') // 'User' | 'ServicePrincipal' | 'Group'
 
 param deploymentTags = {
   environment: readEnvironmentVariable('AZURE_ENV_NAME', 'dev')
@@ -43,7 +43,7 @@ param speechServiceLocation = readEnvironmentVariable('AZURE_SPEECH_LOCATION', '
 // Networking
 // ---------------------------------------------------------------------------
 
-param networkIsolation              = bool(readEnvironmentVariable('NETWORK_ISOLATION', 'true'))
+param networkIsolation              = false
 param useExistingVNet               = bool(readEnvironmentVariable('USE_EXISTING_VNET', 'false'))
 param existingVnetResourceId        = readEnvironmentVariable('EXISTING_VNET_RESOURCE_ID', '')
 param deploySubnets                 = bool(readEnvironmentVariable('DEPLOY_SUBNETS', 'true'))
@@ -58,7 +58,7 @@ param bastionAllowedSourceIPs       = []
 
 param deployAiFoundry         = true
 param deployAiFoundrySubnet   = true
-param deployAppConfig         = true
+param deployAppConfig         = false
 param deployAppInsights       = true
 param deployCosmosDb          = false
 param deployContainerApps     = false
