@@ -1,0 +1,131 @@
+name: Deploy Bicep Submodule
+
+on:
+  workflow_dispatch:
+    inputs:
+      environmentName:
+        description: 'azd environment name (also used as resource name prefix)'
+        required: true
+        default: 'dev'
+      location:
+        description: 'Primary Azure region for the deployment'
+        required: true
+        default: 'eastus2'
+      resourceGroupName:
+        description: 'Target resource group (created if missing)'
+        required: false
+        default: ''
+      whatIf:
+        description: 'Run what-if instead of an actual deployment'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+  push:
+    branches:
+      - main
+    paths:
+      - 'bicep-ptn-aiml-landing-zone'
+      - 'config/**'
+      - '.github/workflows/deploy-bicep.yml'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  TEMPLATE_FILE: bicep-ptn-aiml-landing-zone/main.bicep
+  PARAMETERS_FILE: config/main.bicepparam
+  AZURE_ENV_NAME: ${{ github.event.inputs.environmentName || 'dev' }}
+  AZURE_LOCATION: ${{ github.event.inputs.location || 'eastus2' }}
+
+jobs:
+  validate:
+    name: Validate Bicep
+    runs-on: ubuntu-latest
+    env:
+      AZURE_PRINCIPAL_ID: ${{ secrets.AZURE_PRINCIPAL_ID }}
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Resolve resource group name
+        id: rg
+        run: |
+          NAME="${{ github.event.inputs.resourceGroupName }}"
+          if [ -z "$NAME" ]; then NAME="rg-ai-lz-${AZURE_ENV_NAME}"; fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure resource group exists
+        run: |
+          az group create \
+            --name "${{ steps.rg.outputs.name }}" \
+            --location "${{ env.AZURE_LOCATION }}" \
+            --tags environment="${{ env.AZURE_ENV_NAME }}" managedBy=bicep \
+            --output none
+
+      - name: Bicep build
+        run: az bicep build --file "${{ env.TEMPLATE_FILE }}"
+
+      - name: What-if (resource group scope)
+        run: |
+          az deployment group what-if \
+            --resource-group "${{ steps.rg.outputs.name }}" \
+            --name "${{ env.AZURE_ENV_NAME }}-$(date +%Y%m%d%H%M%S)" \
+            --template-file "${{ env.TEMPLATE_FILE }}" \
+            --parameters "${{ env.PARAMETERS_FILE }}"
+
+  deploy:
+    name: Deploy Bicep
+    needs: validate
+    if: ${{ github.event.inputs.whatIf != 'true' }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environmentName || 'dev' }}
+    env:
+      AZURE_PRINCIPAL_ID: ${{ secrets.AZURE_PRINCIPAL_ID }}
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Resolve resource group name
+        id: rg
+        run: |
+          NAME="${{ github.event.inputs.resourceGroupName }}"
+          if [ -z "$NAME" ]; then NAME="rg-ai-lz-${AZURE_ENV_NAME}"; fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure resource group exists
+        run: |
+          az group create \
+            --name "${{ steps.rg.outputs.name }}" \
+            --location "${{ env.AZURE_LOCATION }}" \
+            --tags environment="${{ env.AZURE_ENV_NAME }}" managedBy=bicep \
+            --output none
+
+      - name: Deploy (resource group scope)
+        run: |
+          az deployment group create \
+            --resource-group "${{ steps.rg.outputs.name }}" \
+            --name "${{ env.AZURE_ENV_NAME }}-$(date +%Y%m%d%H%M%S)" \
+            --template-file "${{ env.TEMPLATE_FILE }}" \
+            --parameters "${{ env.PARAMETERS_FILE }}"
