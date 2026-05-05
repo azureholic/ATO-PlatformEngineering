@@ -35,11 +35,9 @@ param deploymentTags = {
 // Regional overrides (leave '' to inherit from `location`)
 // ---------------------------------------------------------------------------
 
-param aiFoundryLocation     = readEnvironmentVariable('AZURE_AI_FOUNDRY_LOCATION', '')
 param cosmosLocation        = readEnvironmentVariable('AZURE_COSMOS_LOCATION', '')
 param searchServiceLocation = readEnvironmentVariable('AZURE_SEARCH_LOCATION', '')
 param speechServiceLocation = readEnvironmentVariable('AZURE_SPEECH_LOCATION', '')
-param psqlLocation          = readEnvironmentVariable('AZURE_PSQL_LOCATION', '')
 
 // ---------------------------------------------------------------------------
 // Networking
@@ -68,7 +66,6 @@ param deployContainerRegistry = false
 param deployContainerEnv      = false
 param deployNsgs              = true
 param deployAzureFirewall     = bool(readEnvironmentVariable('DEPLOY_AZURE_FIREWALL', 'false'))
-param deployMcp               = false
 param deployGroundingWithBing = false
 param deployKeyVault          = false
 param deployVmKeyVault        = bool(readEnvironmentVariable('DEPLOY_VM_KEY_VAULT', 'false'))
@@ -78,10 +75,8 @@ param deploySearchService     = false
 param deploySpeechService     = bool(readEnvironmentVariable('DEPLOY_SPEECH_SERVICE', 'false'))
 param speechServiceSku        = 'S0'
 param deployStorageAccount    = false
-param greenFieldDeployment    = true
 param deployVM                = bool(readEnvironmentVariable('DEPLOY_VM', 'false'))
 param deploySoftware          = false
-param deployPostgres          = false
 
 // ---------------------------------------------------------------------------
 // Identity / auth
@@ -91,7 +86,6 @@ param useUAI                  = bool(readEnvironmentVariable('USE_UAI', 'true'))
 param useCAppAPIKey           = bool(readEnvironmentVariable('USE_CAPP_API_KEY', 'false'))
 param useZoneRedundancy       = false
 param enableAgenticRetrieval  = bool(readEnvironmentVariable('ENABLE_AGENTIC_RETRIEVAL', 'true'))
-param useCMK                  = false
 
 // ---------------------------------------------------------------------------
 // Existing resource references (leave null to provision new)
@@ -107,8 +101,6 @@ param aiFoundryCosmosDBAccountResourceId = null
 
 param aiFoundryAccountName          = null
 param aiFoundryProjectName          = null
-param aiFoundryProjectDisplayName   = 'my-foundry-project'
-param aiFoundryProjectDescription   = 'My Foundry Project'
 param aiFoundryStorageAccountName   = null
 param aiFoundryStorageSku           = 'Standard_LRS'
 param aiFoundrySearchServiceName    = null
@@ -118,17 +110,12 @@ param appConfigName                 = null
 param appInsightsName               = null
 param containerEnvName              = null
 param containerRegistryName         = null
-param conversationContainerName     = null
-param dataIngestContainerAppName    = null
-param datasourcesContainerName      = null
 param dbAccountName                 = null
 param dbDatabaseName                = null
-param frontEndContainerAppName      = null
 param keyVaultName                  = null
 param logAnalyticsWorkspaceName     = null
 param searchServiceName             = null
 param speechServiceName             = null
-param solutionStorageAccountName    = null
 
 // ---------------------------------------------------------------------------
 // VM

@@ -184,7 +184,7 @@ if (-not $SkipGitHubSecrets) {
                 Write-Host "Setting repository secrets on $repoSlug..." -ForegroundColor Cyan
                 foreach ($name in $secrets.Keys) {
                     Write-Host "  + $name" -ForegroundColor Green
-                    $secrets[$name] | gh secret set $name --repo $repoSlug --body -
+                    gh secret set $name --repo $repoSlug --body $secrets[$name]
                 }
             }
             else {
@@ -197,7 +197,7 @@ if (-not $SkipGitHubSecrets) {
                 gh api --method PUT "repos/$repoSlug/environments/$env" --silent 2>$null | Out-Null
                 foreach ($name in $secrets.Keys) {
                     Write-Host "  + $name -> $env" -ForegroundColor Green
-                    $secrets[$name] | gh secret set $name --repo $repoSlug --env $env --body -
+                    gh secret set $name --repo $repoSlug --env $env --body $secrets[$name]
                 }
             }
         }
