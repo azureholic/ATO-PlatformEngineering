@@ -43,7 +43,7 @@ param speechServiceLocation = readEnvironmentVariable('AZURE_SPEECH_LOCATION', '
 // Networking
 // ---------------------------------------------------------------------------
 
-param networkIsolation              = false
+param networkIsolation              = bool(readEnvironmentVariable('NETWORK_ISOLATION', 'true'))
 param useExistingVNet               = bool(readEnvironmentVariable('USE_EXISTING_VNET', 'false'))
 param existingVnetResourceId        = readEnvironmentVariable('EXISTING_VNET_RESOURCE_ID', '')
 param deploySubnets                 = bool(readEnvironmentVariable('DEPLOY_SUBNETS', 'true'))
@@ -51,6 +51,10 @@ param sideBySideDeploy              = bool(readEnvironmentVariable('SIDE_BY_SIDE
 param privateEndpointLocation       = readEnvironmentVariable('AZURE_PE_LOCATION', '')
 param privateEndpointResourceGroupName = readEnvironmentVariable('AZURE_PE_RESOURCE_GROUP_NAME', '')
 param bastionAllowedSourceIPs       = []
+
+// Hub-and-spoke: optional external firewall + shared private DNS zones
+param externalFirewallPrivateIp        = readEnvironmentVariable('EXTERNAL_FIREWALL_PRIVATE_IP', '')
+param existingPrivateDnsZonesResourceGroupId = readEnvironmentVariable('EXISTING_PRIVATE_DNS_ZONES_RG_ID', '')
 
 // ---------------------------------------------------------------------------
 // Feature flags — toggle the components you want to deploy
