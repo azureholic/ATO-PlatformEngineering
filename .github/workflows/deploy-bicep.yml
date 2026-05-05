@@ -10,7 +10,7 @@ on:
       location:
         description: 'Primary Azure region for the deployment'
         required: true
-        default: 'eastus2'
+        default: 'swedencentral'
       resourceGroupName:
         description: 'Target resource group (created if missing)'
         required: false
@@ -23,13 +23,6 @@ on:
         options:
           - 'false'
           - 'true'
-  push:
-    branches:
-      - main
-    paths:
-      - 'bicep-ptn-aiml-landing-zone'
-      - 'config/**'
-      - '.github/workflows/deploy-bicep.yml'
 
 permissions:
   id-token: write
@@ -39,7 +32,7 @@ env:
   TEMPLATE_FILE: bicep-ptn-aiml-landing-zone/main.bicep
   PARAMETERS_FILE: config/main.bicepparam
   AZURE_ENV_NAME: ${{ github.event.inputs.environmentName || 'dev' }}
-  AZURE_LOCATION: ${{ github.event.inputs.location || 'eastus2' }}
+  AZURE_LOCATION: ${{ github.event.inputs.location || 'swedencentral' }}
 
 jobs:
   validate:
