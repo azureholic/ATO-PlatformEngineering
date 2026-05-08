@@ -17,14 +17,23 @@ var deployment = config["AzureOpenAI:Deployment"]
     ?? throw new InvalidOperationException("AzureOpenAI:Deployment is not configured.");
 var mcpEndpoint = config["Mcp:Endpoint"]
     ?? throw new InvalidOperationException("Mcp:Endpoint is not configured.");
+var tenantId = config["AzureOpenAI:TenantId"];
 
 // AzureOpenAIClient expects the resource base URI (not the /openai/v1 path).
 var baseUri = new Uri(new Uri(endpoint), "/");
 
 Console.WriteLine($"Azure OpenAI : {baseUri} (deployment: {deployment})");
 Console.WriteLine($"MCP server   : {mcpEndpoint}");
+if (!string.IsNullOrWhiteSpace(tenantId))
+{
+    Console.WriteLine($"Tenant       : {tenantId}");
+}
 
-var azureClient = new AzureOpenAIClient(baseUri, new DefaultAzureCredential());
+var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+{
+    TenantId = string.IsNullOrWhiteSpace(tenantId) ? null : tenantId,
+});
+var azureClient = new AzureOpenAIClient(baseUri, credential);
 
 IChatClient chatClient = new ChatClientBuilder(azureClient.GetChatClient(deployment).AsIChatClient())
     .UseFunctionInvocation()
