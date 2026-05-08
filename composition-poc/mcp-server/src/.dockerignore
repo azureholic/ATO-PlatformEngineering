@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/*.user
+**/*.suo
+**/.git/
+**/.github/
+**/node_modules/
+**/.azure/
+**/.env
