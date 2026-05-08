@@ -1,16 +1,13 @@
 # Catalog MCP Server
 
-A .NET 10 MCP server packaged for `azd up` to Azure Container Apps. It exposes
-the catalog from a separate repository (default: `azureholic/ATO-Catalog`)
-as MCP tools.
+A .NET 10 MCP server that exposes the catalog from a separate repository
+(default: `azureholic/ATO-Catalog`) as MCP tools.
 
 ## Layout
 
 ```
 mcp-server/
-  azure.yaml           # azd service: api → container app
-  infra/               # Bicep (subscription scope) — Log Analytics, ACR, ACA env, container app
-  src/                 # .NET 10 source + Dockerfile
+  src/                 # .NET 10 source
 ```
 
 ## Catalog source
@@ -45,12 +42,4 @@ Default points at <https://github.com/azureholic/ATO-Catalog>.
 ```pwsh
 cd composition-poc/mcp-server/src
 dotnet run
-```
-
-## Deploy
-
-```pwsh
-cd composition-poc/mcp-server
-azd auth login
-azd up
 ```
