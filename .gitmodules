@@ -1,6 +1,6 @@
 [submodule "bicep-ptn-aiml-landing-zone"]
 	path = bicep-ptn-aiml-landing-zone
 	url = https://github.com/azureholic/azh-bicep-ptn-aiml-landing-zone.git
-[submodule "composition-poc/catalog"]
-	path = composition-poc/catalog
+[submodule "catalog"]
+	path = catalog
 	url = https://github.com/azureholic/ATO-Catalog.git
